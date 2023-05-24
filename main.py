@@ -19,16 +19,18 @@ def estimePrice(theta0, theta1, mileage):
 def descentGradient(theta0, theta1):
     temptheta0 = theta0
     temptheta1 = theta1
+
     for i in range(m):
         price = estimePrice(theta0, theta1, datasetlist[i][0])
-        temptheta0 += (price - datasetlist[i][1])
-        temptheta1 += (price - datasetlist[i][1]) / datasetlist[i][0]
+        temptheta0 = temptheta0 - (learningrate*(price-datasetlist[i][1])) / m
 
-        temptheta0 = (learningrate / m) * temptheta0
-        temptheta1 = (learningrate / m) * temptheta1
+    theta0 = temptheta0
 
-        theta0 = temptheta0
-        theta1 = temptheta1
+    for i in range(m):
+        price = estimePrice(theta0, theta1, datasetlist[i][0])
+        temptheta1 = temptheta1 + (learningrate * (price-datasetlist[i][1]) / datasetlist[i][0]) / m
+
+    theta1 = temptheta1
 
     return theta0, theta1
 
@@ -36,8 +38,21 @@ theta0val = 0
 theta1val = 0
 
 
-for i in range(100):
+for i in range(10000):
     theta0val, theta1val = descentGradient(theta0val, theta1val)
     print(theta0val, theta1val)
 
 print(estimePrice(theta0val, theta1val, 1000))
+
+import matplotlib.pyplot as plt
+
+x = [datasetlist[i][0] for i in range(m)]
+y = [datasetlist[i][1] for i in range(m)]
+
+plt.scatter(x , y)
+
+y = [theta0val + theta1val*i for i in x]
+
+plt.plot(x , y , color = 'r')
+
+plt.show()
